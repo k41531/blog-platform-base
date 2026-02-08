@@ -212,6 +212,26 @@ export async function getPublishedPosts(): Promise<
   }
 }
 
+export async function getPostById(
+  id: string,
+): Promise<Result<Post, ActionError>> {
+  const userResult = await getCurrentUserId();
+  if (!userResult.ok) return userResult;
+  const userId = userResult.value;
+
+  try {
+    const post = await postRepository.findById(id);
+    if (!post) return err({ type: "NOT_FOUND" });
+    if (post.authorId !== userId) return err({ type: "UNAUTHORIZED" });
+    return ok(post);
+  } catch (e) {
+    return err({
+      type: "DATABASE_ERROR",
+      message: e instanceof Error ? e.message : "Unknown error",
+    });
+  }
+}
+
 export async function getMyPosts(): Promise<Result<Post[], ActionError>> {
   const userResult = await getCurrentUserId();
   if (!userResult.ok) return userResult;
