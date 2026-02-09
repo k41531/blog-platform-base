@@ -152,6 +152,9 @@ tsc --noEmit と lint だけでは不十分な場合がある。フェーズの�
 `(public)/posts/[slug]` と `(dashboard)/posts/[id]/edit` のように、Route Group 内で同じパス位置に異なる動的パラメータ名を使うと Next.js がエラーを出す。Route Group はURLに影響しないため、実質同じパスとして扱われる。
 → **対策**: 認証が必要なルートは Route Group `(dashboard)` ではなく、実際のURLセグメント `dashboard/` を使う
 
+### SECURITY DEFINER 関数では public スキーマを明示する
+`handle_new_user()` のような `SECURITY DEFINER` トリガー関数は `auth` スキーマのコンテキストで実行されるため、`profiles` ではなく `public.profiles` と明示し、`SET search_path = public` を付ける必要がある
+
 ## PRテンプレート
 
 - 変更の概要
