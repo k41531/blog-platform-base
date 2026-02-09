@@ -1,15 +1,18 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { FilePlus } from "lucide-react";
+import { connection } from "next/server";
 
 import { Button } from "@/components/ui/button";
 import { getMyPosts } from "@/lib/actions/post-actions";
 import { PostListItem } from "@/components/features/dashboard/post-list-item";
 
-export default async function PostsPage({
+async function PostListContent({
   searchParams,
 }: {
   searchParams: Promise<{ status?: string }>;
 }) {
+  await connection();
   const params = await searchParams;
   const result = await getMyPosts();
 
@@ -29,17 +32,7 @@ export default async function PostsPage({
       : allPosts.filter((p) => p.status === filter);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">マイ記事</h2>
-        <Button asChild>
-          <Link href="/dashboard/posts/new">
-            <FilePlus className="mr-2 h-4 w-4" />
-            新規作成
-          </Link>
-        </Button>
-      </div>
-
+    <>
       {/* Filter tabs */}
       <div className="flex gap-2">
         {[
@@ -92,6 +85,36 @@ export default async function PostsPage({
           ))}
         </div>
       )}
+    </>
+  );
+}
+
+export default function PostsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string }>;
+}) {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">マイ記事</h2>
+        <Button asChild>
+          <Link href="/dashboard/posts/new">
+            <FilePlus className="mr-2 h-4 w-4" />
+            新規作成
+          </Link>
+        </Button>
+      </div>
+
+      <Suspense
+        fallback={
+          <p className="text-muted-foreground text-center py-12">
+            読み込み中...
+          </p>
+        }
+      >
+        <PostListContent searchParams={searchParams} />
+      </Suspense>
     </div>
   );
 }

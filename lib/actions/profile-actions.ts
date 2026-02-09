@@ -10,8 +10,6 @@ import * as profileRepository from "@/lib/repositories/profile-repository";
 import type { ActionError } from "@/lib/actions/types";
 import { getCurrentUserId } from "@/lib/actions/types";
 
-export type { ActionError };
-
 export async function getProfile(
   userId: string,
 ): Promise<Result<Profile, ActionError>> {

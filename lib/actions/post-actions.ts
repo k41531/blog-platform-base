@@ -14,8 +14,6 @@ import * as postRepository from "@/lib/repositories/post-repository";
 import type { ActionError } from "@/lib/actions/types";
 import { getCurrentUserId } from "@/lib/actions/types";
 
-export type { ActionError };
-
 export async function createDraftPost(
   formData: FormData,
 ): Promise<Result<Post, ActionError>> {

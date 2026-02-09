@@ -9,8 +9,6 @@ import * as likeRepository from "@/lib/repositories/like-repository";
 import type { ActionError } from "@/lib/actions/types";
 import { getCurrentUserId } from "@/lib/actions/types";
 
-export type { ActionError };
-
 export async function toggleLike(
   postId: string,
 ): Promise<Result<{ liked: boolean; count: number }, ActionError>> {

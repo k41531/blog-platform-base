@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { ArrowLeft } from "lucide-react";
+import { connection } from "next/server";
 
 import { getPost } from "@/lib/actions/post-actions";
 import { getLikeCount, hasLiked } from "@/lib/actions/like-actions";
@@ -13,19 +14,8 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const result = await getPost(slug);
-  if (!result.ok) return {};
-
-  const post = result.value;
-  return {
-    title: post.title,
-    description: post.content.slice(0, 160),
-  };
-}
-
-export default async function PostPage({ params }: Props) {
+async function PostDetail({ params }: { params: Promise<{ slug: string }> }) {
+  await connection();
   const { slug } = await params;
   const result = await getPost(slug);
 
@@ -72,5 +62,19 @@ export default async function PostPage({ params }: Props) {
         />
       </div>
     </article>
+  );
+}
+
+export default function PostPage({ params }: Props) {
+  return (
+    <Suspense
+      fallback={
+        <p className="text-muted-foreground text-center py-12">
+          読み込み中...
+        </p>
+      }
+    >
+      <PostDetail params={params} />
+    </Suspense>
   );
 }

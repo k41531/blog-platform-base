@@ -1,20 +1,65 @@
-import { updateSession } from "@/lib/supabase/proxy";
-import { type NextRequest } from "next/server";
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 
 export async function proxy(request: NextRequest) {
-  return await updateSession(request);
+  let supabaseResponse = NextResponse.next({
+    request,
+  });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value),
+          );
+          supabaseResponse = NextResponse.next({
+            request,
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options),
+          );
+        },
+      },
+    },
+  );
+
+  // Do not run code between createServerClient and
+  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
+  // issues with users being randomly logged out.
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const pathname = request.nextUrl.pathname;
+
+  // Protected routes: /dashboard/* requires authentication
+  if (pathname.startsWith("/dashboard") && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/login";
+    return NextResponse.redirect(url);
+  }
+
+  // Auth routes: redirect authenticated users to dashboard
+  // (but allow /auth/confirm for email verification callbacks)
+  if (pathname.startsWith("/auth") && !pathname.startsWith("/auth/confirm") && user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/dashboard/posts";
+    return NextResponse.redirect(url);
+  }
+
+  // IMPORTANT: You *must* return the supabaseResponse object as it is.
+  return supabaseResponse;
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - images - .svg, .png, .jpg, .jpeg, .gif, .webp
-     * Feel free to modify this pattern to include more paths.
-     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

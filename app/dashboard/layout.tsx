@@ -1,22 +1,12 @@
-import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
-import { createClient } from "@/lib/supabase/server";
 import { DashboardNav } from "@/components/features/dashboard/dashboard-nav";
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/auth/login");
-  }
-
   return (
     <div className="min-h-screen">
       {/* Mobile header */}
@@ -25,7 +15,9 @@ export default async function DashboardLayout({
           <h1 className="text-lg font-semibold">ダッシュボード</h1>
         </div>
         <div className="border-t px-4 py-2">
-          <DashboardNav />
+          <Suspense>
+            <DashboardNav />
+          </Suspense>
         </div>
       </header>
 
@@ -33,7 +25,9 @@ export default async function DashboardLayout({
         {/* Desktop sidebar */}
         <aside className="sticky top-0 hidden h-screen w-64 shrink-0 border-r bg-background p-4 md:block">
           <h1 className="mb-6 text-lg font-semibold">ダッシュボード</h1>
-          <DashboardNav />
+          <Suspense>
+            <DashboardNav />
+          </Suspense>
         </aside>
 
         {/* Main content */}

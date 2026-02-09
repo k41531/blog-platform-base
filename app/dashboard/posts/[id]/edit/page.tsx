@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { connection } from "next/server";
 
 import { PostEditor } from "@/components/features/editor/post-editor";
 import { getPostById } from "@/lib/actions/post-actions";
@@ -7,7 +9,12 @@ type EditPostPageProps = {
   params: Promise<{ id: string }>;
 };
 
-export default async function EditPostPage({ params }: EditPostPageProps) {
+async function EditPostContent({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  await connection();
   const { id } = await params;
   const result = await getPostById(id);
 
@@ -20,5 +27,19 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
       <h1 className="text-2xl font-bold">記事を編集</h1>
       <PostEditor mode="edit" post={result.value} />
     </div>
+  );
+}
+
+export default function EditPostPage({ params }: EditPostPageProps) {
+  return (
+    <Suspense
+      fallback={
+        <p className="text-muted-foreground text-center py-12">
+          読み込み中...
+        </p>
+      }
+    >
+      <EditPostContent params={params} />
+    </Suspense>
   );
 }

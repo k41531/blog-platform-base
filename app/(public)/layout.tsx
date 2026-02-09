@@ -31,7 +31,7 @@ export default function PublicLayout({
 
       <footer className="border-t">
         <div className="max-w-4xl mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} Blog Platform
+          &copy; 2025 Blog Platform
         </div>
       </footer>
     </div>

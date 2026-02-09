@@ -1,7 +1,9 @@
+import { Suspense } from "react";
+
 import { getMyProfile } from "@/lib/actions/profile-actions";
 import { ProfileForm } from "@/components/features/profile/profile-form";
 
-export default async function SettingsPage() {
+async function SettingsContent() {
   const result = await getMyProfile();
 
   if (!result.ok) {
@@ -12,10 +14,22 @@ export default async function SettingsPage() {
     );
   }
 
+  return <ProfileForm profile={result.value} />;
+}
+
+export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">設定</h2>
-      <ProfileForm profile={result.value} />
+      <Suspense
+        fallback={
+          <p className="text-muted-foreground text-center py-12">
+            読み込み中...
+          </p>
+        }
+      >
+        <SettingsContent />
+      </Suspense>
     </div>
   );
 }
