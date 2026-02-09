@@ -7,7 +7,7 @@
 ## 日付
 
 - 作成日: 2025-02-04
-- 最終更新: 2025-02-04
+- 最終更新: 2025-02-09
 
 ## 更新履歴
 
@@ -15,6 +15,7 @@
 |------|------|
 | 2025-02-04 | 初版作成 |
 | 2025-02-04 | Next.jsテンプレートに合わせて構造を修正 |
+| 2025-02-09 | MVP実装に合わせて repositories/actions 層を追加 |
 
 ## コンテキスト
 
@@ -31,12 +32,13 @@
 
 ```
 lib/
-├── domain/           # ドメイン層
+├── domain/           # ドメイン層（純粋なビジネスロジック）
+├── repositories/     # Repository層（Supabase CRUD）
+├── actions/          # Server Actions（ユースケース実行）
+│   └── types.ts      #   ActionError型、認証ヘルパー
 ├── supabase/         # Supabase クライアント（Next.jsテンプレート由来）
 └── shared/           # 共有ユーティリティ
 ```
-
-※ `application/` 層は、ユースケースが複雑化した際に追加を検討する。
 
 ### 各層の責務
 
@@ -44,6 +46,7 @@ lib/
 - 純粋なビジネスロジック
 - 外部依存なし（Supabase 等のインフラに依存しない）
 - エンティティ、値オブジェクト、ドメインサービス
+- バリデーション関数
 
 ```typescript
 // lib/domain/post/post.ts
@@ -51,10 +54,30 @@ export function createPost(input: CreatePostInput): Result<Post, PostError>
 export function publishPost(post: Post): Result<Post, PostError>
 ```
 
+#### Repository 層（データアクセス層）
+- Supabase を使った CRUD 操作
+- snake_case（DB）→ camelCase（ドメイン）の変換を `toXxx()` / `toRow()` ヘルパーで実施
+- ドメインモデルを受け取り、ドメインモデルを返す
+
+```typescript
+// lib/repositories/post-repository.ts
+export async function findPostBySlug(supabase, slug): Promise<Post | null>
+export async function insertPost(supabase, post): Promise<Post>
+```
+
+#### Actions 層（ユースケース層）
+- Server Actions（`"use server"`）
+- 認証チェック → ドメインバリデーション → Repository操作 → `revalidatePath` の順序
+- `lib/actions/types.ts` に ActionError 型と認証ヘルパーを共通化
+
+```typescript
+// lib/actions/post-actions.ts
+export async function createPostAction(formData): Promise<ActionResult>
+```
+
 #### Supabase 層（インフラ層）
 - Next.js + Supabase テンプレートで生成されたクライアント
 - サーバー用・クライアント用の createClient()
-- 将来的に Repository パターンを導入する場合はここに実装
 
 ```typescript
 // lib/supabase/server.ts
@@ -87,8 +110,8 @@ export function createClient(): SupabaseClient
 
 ### ネガティブな影響
 
-- 小規模な変更でも複数層にまたがる場合がある
-- ユースケースが複雑化した際に application 層の追加判断が必要
+- 小規模な変更でも複数層にまたがる場合がある（例: 新フィールド追加時に domain → repository → action を変更）
+- 層間の変換コード（toXxx/toRow）がボイラープレートになりやすい
 
 ## 参考
 
