@@ -11,6 +11,7 @@ import {
 
 import { editorTheme } from "./theme";
 import { markdownKeymap } from "./keymap";
+import { markdownDecorations } from "./markdown-decorations";
 
 export function createExtensions(options: {
   onChange: (value: string) => void;
@@ -36,6 +37,9 @@ export function createExtensions(options: {
 
     // Keymap
     keymap.of([...markdownKeymap, ...defaultKeymap, ...historyKeymap]),
+
+    // Typora-style decorations
+    markdownDecorations,
 
     // Change listener
     EditorView.updateListener.of((update) => {

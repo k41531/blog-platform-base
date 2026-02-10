@@ -106,4 +106,10 @@ export const editorTheme = EditorView.theme({
   ".cm-hr": {
     color: "hsl(var(--border))",
   },
+  // Decorated link text (WYSIWYG mode)
+  ".cm-link-decorated": {
+    color: "hsl(var(--primary))",
+    textDecoration: "underline",
+    cursor: "pointer",
+  },
 });
