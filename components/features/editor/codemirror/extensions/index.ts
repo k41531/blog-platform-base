@@ -10,6 +10,7 @@ import {
 } from "@codemirror/language";
 
 import { editorTheme } from "./theme";
+import { markdownKeymap } from "./keymap";
 
 export function createExtensions(options: {
   onChange: (value: string) => void;
@@ -34,7 +35,7 @@ export function createExtensions(options: {
     ...(options.placeholder ? [placeholder(options.placeholder)] : []),
 
     // Keymap
-    keymap.of([...defaultKeymap, ...historyKeymap]),
+    keymap.of([...markdownKeymap, ...defaultKeymap, ...historyKeymap]),
 
     // Change listener
     EditorView.updateListener.of((update) => {
