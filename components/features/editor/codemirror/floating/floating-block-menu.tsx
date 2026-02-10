@@ -60,10 +60,8 @@ export function FloatingBlockMenu({
   return (
     <div
       className={cn(
-        "absolute z-10 transition-opacity duration-150",
-        visible
-          ? "opacity-100"
-          : "opacity-0 pointer-events-none"
+        "absolute z-10",
+        visible ? "opacity-100" : "opacity-0 pointer-events-none"
       )}
       style={{ top, left }}
     >

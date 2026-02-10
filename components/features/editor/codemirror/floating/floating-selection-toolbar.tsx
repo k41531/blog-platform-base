@@ -38,11 +38,8 @@ export function FloatingSelectionToolbar({
   return (
     <div
       className={cn(
-        "absolute z-10 flex items-center gap-0.5 rounded-md border bg-popover p-1 shadow-md transition-all duration-150",
-        flipped ? "origin-top" : "origin-bottom",
-        visible
-          ? "opacity-100 scale-100"
-          : "opacity-0 scale-95 pointer-events-none"
+        "absolute z-10 flex items-center gap-0.5 rounded-md border bg-popover p-1 shadow-md",
+        visible ? "opacity-100" : "opacity-0 pointer-events-none"
       )}
       style={{ top, left }}
       role="toolbar"
