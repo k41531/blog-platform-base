@@ -18,7 +18,6 @@ type FloatingSelectionToolbarProps = {
   visible: boolean;
   top: number;
   left: number;
-  flipped: boolean;
   editorView: EditorView | null;
 };
 
@@ -26,7 +25,6 @@ export function FloatingSelectionToolbar({
   visible,
   top,
   left,
-  flipped,
   editorView,
 }: FloatingSelectionToolbarProps) {
   const run = (fn: (view: EditorView) => boolean | void) => {
