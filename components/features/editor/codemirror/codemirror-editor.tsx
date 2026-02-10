@@ -156,6 +156,7 @@ export function CodeMirrorEditor({
               visible={floatingUI.selectionToolbar.visible}
               top={floatingUI.selectionToolbar.top}
               left={floatingUI.selectionToolbar.left}
+              flipped={floatingUI.selectionToolbar.flipped}
               editorView={editorView}
             />
           </>

@@ -60,19 +60,19 @@ export function FloatingBlockMenu({
   return (
     <div
       className={cn(
-        "absolute z-10 transition-all duration-150",
+        "absolute z-10 transition-opacity duration-150",
         visible
-          ? "opacity-100 scale-100"
-          : "opacity-0 scale-95 pointer-events-none"
+          ? "opacity-100"
+          : "opacity-0 pointer-events-none"
       )}
-      style={{ top, left: left - 32 }}
+      style={{ top, left }}
     >
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 rounded-full"
+            className="h-7 w-7 rounded-full opacity-50 transition-opacity hover:opacity-100 data-[state=open]:opacity-100"
             aria-label="ブロックを追加"
             onMouseDown={(e) => e.preventDefault()}
           >

@@ -11,16 +11,20 @@ type FloatingPosition = {
   left: number;
 };
 
+type SelectionToolbarPosition = FloatingPosition & {
+  flipped: boolean; // true = displayed below selection
+};
+
 export type FloatingUIState = {
   blockMenu: FloatingPosition;
-  selectionToolbar: FloatingPosition;
+  selectionToolbar: SelectionToolbarPosition;
 };
 
 const HIDDEN: FloatingPosition = { visible: false, top: 0, left: 0 };
 
 const INITIAL_STATE: FloatingUIState = {
   blockMenu: HIDDEN,
-  selectionToolbar: HIDDEN,
+  selectionToolbar: { ...HIDDEN, flipped: false },
 };
 
 function computeState(
@@ -39,16 +43,19 @@ function computeState(
   if (isEmptyLine) {
     const coords = view.coordsAtPos(cursorLine.from);
     if (coords) {
+      const buttonHeight = 28; // h-7 = 28px
+      const buttonWidth = 28;
+      const lineCenter = (coords.top + coords.bottom) / 2 - containerRect.top;
       blockMenu = {
         visible: true,
-        top: coords.top - containerRect.top,
-        left: coords.left - containerRect.left,
+        top: lineCenter - buttonHeight / 2,
+        left: Math.max(0, coords.left - containerRect.left - buttonWidth - 4),
       };
     }
   }
 
   // --- Selection toolbar (inline formatting) ---
-  let selectionToolbar: FloatingPosition = HIDDEN;
+  let selectionToolbar: SelectionToolbarPosition = { ...HIDDEN, flipped: false };
   if (!isCollapsed) {
     const fromCoords = view.coordsAtPos(from);
     const toCoords = view.coordsAtPos(to, -1);
@@ -65,10 +72,15 @@ function computeState(
         Math.min(centerX - toolbarWidth / 2, containerWidth - toolbarWidth)
       );
 
+      const topAbove = fromCoords.top - containerRect.top - toolbarHeight - gap;
+      const topBelow = toCoords.bottom - containerRect.top + gap;
+      const flipped = topAbove < 0;
+
       selectionToolbar = {
         visible: true,
-        top: Math.max(0, fromCoords.top - containerRect.top - toolbarHeight - gap),
+        top: flipped ? topBelow : topAbove,
         left: clampedLeft,
+        flipped,
       };
     }
   }
