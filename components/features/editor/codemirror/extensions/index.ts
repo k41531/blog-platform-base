@@ -4,12 +4,8 @@ import { history, historyKeymap } from "@codemirror/commands";
 import { defaultKeymap } from "@codemirror/commands";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
-import {
-  syntaxHighlighting,
-  defaultHighlightStyle,
-} from "@codemirror/language";
 
-import { editorTheme } from "./theme";
+import { editorTheme, markdownHighlighter } from "./theme";
 import { markdownKeymap } from "./keymap";
 import { markdownDecorations } from "./markdown-decorations";
 
@@ -21,7 +17,9 @@ export function createExtensions(options: {
     // Core
     history(),
     EditorView.lineWrapping,
-    syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+
+    // Syntax highlighting with our custom tag→class mapping
+    markdownHighlighter,
 
     // Markdown language
     markdown({

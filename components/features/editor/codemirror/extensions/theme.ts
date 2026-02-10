@@ -1,4 +1,34 @@
 import { EditorView } from "@codemirror/view";
+import { tags, tagHighlighter } from "@lezer/highlight";
+import { syntaxHighlighting } from "@codemirror/language";
+
+/**
+ * Custom tag highlighter that maps lezer highlight tags to
+ * predictable CSS class names for our theme to target.
+ * Unlike defaultHighlightStyle (auto-generated classes) or
+ * classHighlighter (tok-* with no heading level distinction),
+ * this gives us full control over class names per heading level.
+ */
+export const markdownHighlighter = syntaxHighlighting(
+  tagHighlighter([
+    { tag: tags.heading1, class: "cm-heading1" },
+    { tag: tags.heading2, class: "cm-heading2" },
+    { tag: tags.heading3, class: "cm-heading3" },
+    { tag: tags.heading4, class: "cm-heading4" },
+    { tag: tags.heading5, class: "cm-heading5" },
+    { tag: tags.heading6, class: "cm-heading6" },
+    { tag: tags.strong, class: "cm-strong" },
+    { tag: tags.emphasis, class: "cm-emphasis" },
+    { tag: tags.strikethrough, class: "cm-strikethrough" },
+    { tag: tags.monospace, class: "cm-monospace" },
+    { tag: tags.link, class: "cm-link" },
+    { tag: tags.url, class: "cm-url" },
+    { tag: tags.quote, class: "cm-quote" },
+    { tag: tags.processingInstruction, class: "cm-formatting" },
+    { tag: tags.meta, class: "cm-meta" },
+    { tag: tags.contentSeparator, class: "cm-hr" },
+  ])
+);
 
 export const editorTheme = EditorView.theme({
   "&": {
@@ -33,28 +63,28 @@ export const editorTheme = EditorView.theme({
   ".cm-gutters": {
     display: "none",
   },
-  // Markdown syntax highlighting
-  ".cm-header-1": {
+  // Heading levels
+  ".cm-heading1": {
     fontSize: "1.875em",
     fontWeight: "700",
     lineHeight: "1.3",
   },
-  ".cm-header-2": {
+  ".cm-heading2": {
     fontSize: "1.5em",
     fontWeight: "600",
     lineHeight: "1.35",
   },
-  ".cm-header-3": {
+  ".cm-heading3": {
     fontSize: "1.25em",
     fontWeight: "600",
     lineHeight: "1.4",
   },
-  ".cm-header-4": {
+  ".cm-heading4": {
     fontSize: "1.125em",
     fontWeight: "600",
     lineHeight: "1.4",
   },
-  ".cm-header-5, .cm-header-6": {
+  ".cm-heading5, .cm-heading6": {
     fontSize: "1em",
     fontWeight: "600",
     lineHeight: "1.5",
@@ -79,18 +109,12 @@ export const editorTheme = EditorView.theme({
     fontStyle: "italic",
   },
   // Inline code
-  "& .cm-monospace": {
+  ".cm-monospace": {
     fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
     fontSize: "0.9em",
     backgroundColor: "hsl(var(--muted))",
     borderRadius: "3px",
     padding: "1px 4px",
-  },
-  // Code block (fenced code)
-  ".cm-line.cm-codeblock": {
-    backgroundColor: "hsl(var(--muted) / 0.5)",
-    fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
-    fontSize: "0.9em",
   },
   // Emphasis
   ".cm-strong": {
