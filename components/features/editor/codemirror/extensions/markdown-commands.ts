@@ -85,6 +85,7 @@ export function toggleHeading(view: EditorView, level: number): boolean {
   if (text.startsWith(prefix)) {
     view.dispatch({
       changes: { from: line.from, to: line.from + prefix.length, insert: "" },
+      selection: { anchor: line.from },
     });
     return true;
   }
@@ -94,6 +95,7 @@ export function toggleHeading(view: EditorView, level: number): boolean {
   if (match) {
     view.dispatch({
       changes: { from: line.from, to: line.from + match[0].length, insert: prefix },
+      selection: { anchor: line.from + prefix.length },
     });
     return true;
   }
@@ -101,6 +103,7 @@ export function toggleHeading(view: EditorView, level: number): boolean {
   // No heading → add
   view.dispatch({
     changes: { from: line.from, insert: prefix },
+    selection: { anchor: line.from + prefix.length },
   });
   return true;
 }
