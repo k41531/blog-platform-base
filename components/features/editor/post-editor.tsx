@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { MarkdownPreview } from "@/components/features/editor/markdown-preview";
+import { CodeMirrorEditor } from "@/components/features/editor/codemirror/codemirror-editor";
 import type { Post } from "@/lib/domain/post/post";
 import {
   createDraftPost,
@@ -27,7 +27,6 @@ export function PostEditor({ mode, post }: PostEditorProps) {
   const [content, setContent] = useState(post?.content ?? "");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [mobileView, setMobileView] = useState<"editor" | "preview">("editor");
 
   function formatError(errorObj: {
     type: string;
@@ -83,7 +82,6 @@ export function PostEditor({ mode, post }: PostEditorProps) {
     setError(null);
     startTransition(async () => {
       if (mode === "edit" && post) {
-        // Update first, then publish
         const formData = new FormData();
         formData.set("title", title);
         formData.set("content", content);
@@ -103,7 +101,6 @@ export function PostEditor({ mode, post }: PostEditorProps) {
           }
         }
       } else {
-        // Create draft first, then publish
         const formData = new FormData();
         formData.set("title", title);
         formData.set("content", content);
@@ -157,57 +154,15 @@ export function PostEditor({ mode, post }: PostEditorProps) {
         />
       </div>
 
-      {/* Mobile view toggle */}
-      <div className="flex gap-2 md:hidden">
-        <Button
-          variant={mobileView === "editor" ? "default" : "outline"}
-          size="sm"
-          onClick={() => setMobileView("editor")}
-          type="button"
-        >
-          編集
-        </Button>
-        <Button
-          variant={mobileView === "preview" ? "default" : "outline"}
-          size="sm"
-          onClick={() => setMobileView("preview")}
-          type="button"
-        >
-          プレビュー
-        </Button>
-      </div>
-
-      {/* Desktop: side-by-side, Mobile: tab-switched */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div
-          className={
-            mobileView === "editor" ? "block" : "hidden md:block"
-          }
-        >
-          <Card className="h-full">
-            <CardContent className="p-4">
-              <Label htmlFor="content" className="sr-only">
-                本文
-              </Label>
-              <textarea
-                id="content"
-                placeholder="Markdownで記事を書く..."
-                className="min-h-[400px] w-full resize-y bg-transparent text-sm focus:outline-none"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                disabled={isPending}
-              />
-            </CardContent>
-          </Card>
-        </div>
-        <div
-          className={
-            mobileView === "preview" ? "block" : "hidden md:block"
-          }
-        >
-          <MarkdownPreview content={content} />
-        </div>
-      </div>
+      <Card>
+        <CardContent className="p-4">
+          <CodeMirrorEditor
+            value={content}
+            onChange={setContent}
+            disabled={isPending}
+          />
+        </CardContent>
+      </Card>
 
       <div className="flex flex-wrap items-center gap-3">
         <Button
