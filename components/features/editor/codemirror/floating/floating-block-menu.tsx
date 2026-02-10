@@ -54,6 +54,7 @@ export function FloatingBlockMenu({
   const run = (fn: (view: EditorView) => boolean | void) => {
     if (!editorView) return;
     fn(editorView);
+    editorView.focus();
   };
 
   return (

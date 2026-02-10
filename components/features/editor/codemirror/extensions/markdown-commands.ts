@@ -134,7 +134,11 @@ export function toggleBlockquote(view: EditorView): boolean {
     }
   }
 
-  view.dispatch({ changes });
+  const changeSet = state.changes(changes);
+  view.dispatch({
+    changes,
+    selection: { anchor: changeSet.mapPos(from, 1), head: changeSet.mapPos(to, 1) },
+  });
   return true;
 }
 
@@ -164,7 +168,11 @@ export function toggleBulletList(view: EditorView): boolean {
     }
   }
 
-  view.dispatch({ changes });
+  const changeSet = state.changes(changes);
+  view.dispatch({
+    changes,
+    selection: { anchor: changeSet.mapPos(from, 1), head: changeSet.mapPos(to, 1) },
+  });
   return true;
 }
 
@@ -198,7 +206,11 @@ export function toggleNumberedList(view: EditorView): boolean {
     }
   }
 
-  view.dispatch({ changes });
+  const changeSet = state.changes(changes);
+  view.dispatch({
+    changes,
+    selection: { anchor: changeSet.mapPos(from, 1), head: changeSet.mapPos(to, 1) },
+  });
   return true;
 }
 
