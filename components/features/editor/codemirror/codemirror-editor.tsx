@@ -5,7 +5,9 @@ import { Compartment, EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 
 import { createExtensions } from "./extensions";
-import { EditorToolbar } from "./toolbar/editor-toolbar";
+import { FloatingBlockMenu } from "./floating/floating-block-menu";
+import { FloatingSelectionToolbar } from "./floating/floating-selection-toolbar";
+import { useEditorFloatingUI } from "./floating/use-editor-floating-ui";
 import { LinkDialog } from "./dialogs/link-dialog";
 import { ImageDialog } from "./dialogs/image-dialog";
 import {
@@ -27,7 +29,8 @@ export function CodeMirrorEditor({
   disabled = false,
   placeholder = "Markdownで記事を書く...",
 }: CodeMirrorEditorProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const cmContainerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
   const readOnlyCompartment = useRef(new Compartment());
@@ -36,6 +39,8 @@ export function CodeMirrorEditor({
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [selectedText, setSelectedText] = useState("");
+
+  const floatingUI = useEditorFloatingUI(editorView, wrapperRef);
 
   // Keep callback ref up to date without re-creating extensions
   useEffect(() => {
@@ -48,7 +53,7 @@ export function CodeMirrorEditor({
 
   // Create EditorView once
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!cmContainerRef.current) return;
 
     const extensions = createExtensions({
       onChange: stableOnChange,
@@ -65,7 +70,7 @@ export function CodeMirrorEditor({
 
     const view = new EditorView({
       state,
-      parent: containerRef.current,
+      parent: cmContainerRef.current,
     });
 
     viewRef.current = view;
@@ -132,16 +137,30 @@ export function CodeMirrorEditor({
 
   return (
     <div className="flex flex-col">
-      <EditorToolbar
-        editorView={editorView}
-        disabled={disabled}
-        onLinkClick={handleLinkClick}
-        onImageClick={handleImageClick}
-      />
-      <div
-        ref={containerRef}
-        className="min-h-[400px] w-full [&_.cm-editor]:h-full"
-      />
+      <div ref={wrapperRef} className="relative min-h-[400px] w-full">
+        <div
+          ref={cmContainerRef}
+          className="[&_.cm-editor]:h-full"
+        />
+        {!disabled && (
+          <>
+            <FloatingBlockMenu
+              visible={floatingUI.blockMenu.visible}
+              top={floatingUI.blockMenu.top}
+              left={floatingUI.blockMenu.left}
+              editorView={editorView}
+              onLinkClick={handleLinkClick}
+              onImageClick={handleImageClick}
+            />
+            <FloatingSelectionToolbar
+              visible={floatingUI.selectionToolbar.visible}
+              top={floatingUI.selectionToolbar.top}
+              left={floatingUI.selectionToolbar.left}
+              editorView={editorView}
+            />
+          </>
+        )}
+      </div>
       <LinkDialog
         open={linkDialogOpen}
         onOpenChange={setLinkDialogOpen}

@@ -46,7 +46,7 @@ export const editorTheme = EditorView.theme({
   ".cm-content": {
     caretColor: "hsl(var(--foreground))",
     color: "hsl(var(--foreground))",
-    padding: "16px 0",
+    padding: "16px 0 16px 36px",
   },
   ".cm-cursor, .cm-dropCursor": {
     borderLeftColor: "hsl(var(--foreground))",

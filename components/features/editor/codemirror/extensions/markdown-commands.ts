@@ -85,6 +85,7 @@ export function toggleHeading(view: EditorView, level: number): boolean {
   if (text.startsWith(prefix)) {
     view.dispatch({
       changes: { from: line.from, to: line.from + prefix.length, insert: "" },
+      selection: { anchor: line.from },
     });
     return true;
   }
@@ -94,6 +95,7 @@ export function toggleHeading(view: EditorView, level: number): boolean {
   if (match) {
     view.dispatch({
       changes: { from: line.from, to: line.from + match[0].length, insert: prefix },
+      selection: { anchor: line.from + prefix.length },
     });
     return true;
   }
@@ -101,6 +103,7 @@ export function toggleHeading(view: EditorView, level: number): boolean {
   // No heading → add
   view.dispatch({
     changes: { from: line.from, insert: prefix },
+    selection: { anchor: line.from + prefix.length },
   });
   return true;
 }
@@ -131,7 +134,11 @@ export function toggleBlockquote(view: EditorView): boolean {
     }
   }
 
-  view.dispatch({ changes });
+  const changeSet = state.changes(changes);
+  view.dispatch({
+    changes,
+    selection: { anchor: changeSet.mapPos(from, 1), head: changeSet.mapPos(to, 1) },
+  });
   return true;
 }
 
@@ -161,7 +168,11 @@ export function toggleBulletList(view: EditorView): boolean {
     }
   }
 
-  view.dispatch({ changes });
+  const changeSet = state.changes(changes);
+  view.dispatch({
+    changes,
+    selection: { anchor: changeSet.mapPos(from, 1), head: changeSet.mapPos(to, 1) },
+  });
   return true;
 }
 
@@ -195,7 +206,11 @@ export function toggleNumberedList(view: EditorView): boolean {
     }
   }
 
-  view.dispatch({ changes });
+  const changeSet = state.changes(changes);
+  view.dispatch({
+    changes,
+    selection: { anchor: changeSet.mapPos(from, 1), head: changeSet.mapPos(to, 1) },
+  });
   return true;
 }
 
