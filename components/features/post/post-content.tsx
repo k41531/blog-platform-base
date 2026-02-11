@@ -1,3 +1,6 @@
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 export function PostContent({ content }: { content: string }) {
-  return <div className="whitespace-pre-wrap leading-relaxed">{content}</div>;
+  return <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>;
 }

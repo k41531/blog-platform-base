@@ -1,5 +1,7 @@
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
+import typography from "@tailwindcss/typography";
+import { markdownStyles } from "./lib/shared/markdown-styles";
 
 export default {
   darkMode: ["class"],
@@ -58,7 +60,97 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            fontSize: markdownStyles.base.fontSize,
+            lineHeight: markdownStyles.base.lineHeight,
+            // Headings — match editor sizing, minimal margins
+            h1: {
+              ...markdownStyles.h1,
+              marginTop: "0.5em",
+              marginBottom: "0.25em",
+            },
+            h2: {
+              ...markdownStyles.h2,
+              marginTop: "0.5em",
+              marginBottom: "0.25em",
+            },
+            h3: {
+              ...markdownStyles.h3,
+              marginTop: "0.5em",
+              marginBottom: "0.25em",
+            },
+            h4: {
+              ...markdownStyles.h4,
+              marginTop: "0.5em",
+              marginBottom: "0.25em",
+            },
+            "h5, h6": {
+              ...markdownStyles.h5h6,
+              marginTop: "0.5em",
+              marginBottom: "0.25em",
+            },
+            // Paragraphs — compact spacing
+            p: {
+              marginTop: "0.25em",
+              marginBottom: "0.25em",
+            },
+            // Inline code
+            code: {
+              fontFamily: markdownStyles.inlineCode.fontFamily,
+              fontSize: markdownStyles.inlineCode.fontSize,
+              backgroundColor: "hsl(var(--muted))",
+              borderRadius: markdownStyles.inlineCode.borderRadius,
+              padding: markdownStyles.inlineCode.padding,
+              fontWeight: "400",
+            },
+            "code::before": {
+              content: '""',
+            },
+            "code::after": {
+              content: '""',
+            },
+            // Links
+            a: {
+              color: "hsl(var(--primary))",
+              textDecoration: "underline",
+            },
+            // Blockquotes
+            blockquote: {
+              color: "hsl(var(--muted-foreground))",
+              fontStyle: "italic",
+              marginTop: "0.5em",
+              marginBottom: "0.5em",
+            },
+            // Images
+            img: {
+              maxWidth: "100%",
+              borderRadius: "6px",
+            },
+            // Horizontal rule
+            hr: {
+              borderColor: "hsl(var(--border))",
+              marginTop: "1em",
+              marginBottom: "1em",
+            },
+            // Lists — compact spacing
+            ul: {
+              marginTop: "0.25em",
+              marginBottom: "0.25em",
+            },
+            ol: {
+              marginTop: "0.25em",
+              marginBottom: "0.25em",
+            },
+            li: {
+              marginTop: "0",
+              marginBottom: "0",
+            },
+          },
+        },
+      },
     },
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [tailwindcssAnimate, typography],
 } satisfies Config;

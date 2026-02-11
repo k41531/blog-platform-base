@@ -1,0 +1,44 @@
+/**
+ * Shared markdown typography styles.
+ * Single source of truth for both:
+ * - CodeMirror editor theme (extensions/theme.ts)
+ * - Post display page (tailwind typography plugin)
+ */
+
+export const markdownStyles = {
+  base: {
+    fontSize: "14px",
+    lineHeight: "1.7",
+  },
+  h1: {
+    fontSize: "1.875em",
+    fontWeight: "700",
+    lineHeight: "1.3",
+  },
+  h2: {
+    fontSize: "1.5em",
+    fontWeight: "600",
+    lineHeight: "1.35",
+  },
+  h3: {
+    fontSize: "1.25em",
+    fontWeight: "600",
+    lineHeight: "1.4",
+  },
+  h4: {
+    fontSize: "1.125em",
+    fontWeight: "600",
+    lineHeight: "1.4",
+  },
+  h5h6: {
+    fontSize: "1em",
+    fontWeight: "600",
+    lineHeight: "1.5",
+  },
+  inlineCode: {
+    fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+    fontSize: "0.9em",
+    borderRadius: "3px",
+    padding: "1px 4px",
+  },
+} as const;
