@@ -1,7 +1,24 @@
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 import typography from "@tailwindcss/typography";
-import { markdownStyles } from "./lib/shared/markdown-styles";
+
+// Values from lib/shared/markdown-styles.ts inlined here because
+// tailwind.config.ts runs in a Node/bundler context that cannot always
+// resolve project .ts source files.
+const markdownStyles = {
+  base: { fontSize: "14px", lineHeight: "1.7" },
+  h1: { fontSize: "1.875em", fontWeight: "700", lineHeight: "1.3" },
+  h2: { fontSize: "1.5em", fontWeight: "600", lineHeight: "1.35" },
+  h3: { fontSize: "1.25em", fontWeight: "600", lineHeight: "1.4" },
+  h4: { fontSize: "1.125em", fontWeight: "600", lineHeight: "1.4" },
+  h5h6: { fontSize: "1em", fontWeight: "600", lineHeight: "1.5" },
+  inlineCode: {
+    fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+    fontSize: "0.9em",
+    borderRadius: "3px",
+    padding: "1px 4px",
+  },
+} as const;
 
 export default {
   darkMode: ["class"],
@@ -65,7 +82,6 @@ export default {
           css: {
             fontSize: markdownStyles.base.fontSize,
             lineHeight: markdownStyles.base.lineHeight,
-            // Headings — match editor sizing, minimal margins
             h1: {
               ...markdownStyles.h1,
               marginTop: "0.5em",
@@ -91,12 +107,10 @@ export default {
               marginTop: "0.5em",
               marginBottom: "0.25em",
             },
-            // Paragraphs — compact spacing
             p: {
               marginTop: "0.25em",
               marginBottom: "0.25em",
             },
-            // Inline code
             code: {
               fontFamily: markdownStyles.inlineCode.fontFamily,
               fontSize: markdownStyles.inlineCode.fontSize,
@@ -111,30 +125,25 @@ export default {
             "code::after": {
               content: '""',
             },
-            // Links
             a: {
               color: "hsl(var(--primary))",
               textDecoration: "underline",
             },
-            // Blockquotes
             blockquote: {
               color: "hsl(var(--muted-foreground))",
               fontStyle: "italic",
               marginTop: "0.5em",
               marginBottom: "0.5em",
             },
-            // Images
             img: {
               maxWidth: "100%",
               borderRadius: "6px",
             },
-            // Horizontal rule
             hr: {
               borderColor: "hsl(var(--border))",
               marginTop: "1em",
               marginBottom: "1em",
             },
-            // Lists — compact spacing
             ul: {
               marginTop: "0.25em",
               marginBottom: "0.25em",
