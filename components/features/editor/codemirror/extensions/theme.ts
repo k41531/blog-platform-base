@@ -137,4 +137,36 @@ export const editorTheme = EditorView.theme({
     textDecoration: "underline",
     cursor: "pointer",
   },
+  // ── Code block styling ──────────────────────────
+  ".cm-codeblock-line": {
+    backgroundColor: "hsl(var(--muted))",
+    fontFamily: markdownStyles.inlineCode.fontFamily,
+    fontSize: markdownStyles.inlineCode.fontSize,
+    paddingLeft: "16px",
+    paddingRight: "16px",
+  },
+  ".cm-codeblock-first": {
+    borderTopLeftRadius: "6px",
+    borderTopRightRadius: "6px",
+    paddingTop: "12px",
+  },
+  ".cm-codeblock-last": {
+    borderBottomLeftRadius: "6px",
+    borderBottomRightRadius: "6px",
+    paddingBottom: "12px",
+  },
+  // ── Heading spacing ─────────────────────────────
+  ".cm-heading-line": {
+    paddingTop: "0.15em",
+    paddingBottom: "0.1em",
+  },
+  // ── List indentation ───────────────────────────
+  ".cm-list-line": {
+    paddingLeft: "1.625em",
+  },
+  // ── Blockquote styling ──────────────────────────
+  ".cm-blockquote-line": {
+    borderLeft: "3px solid hsl(var(--border))",
+    paddingLeft: "16px",
+  },
 });
