@@ -50,7 +50,7 @@ async function PostDetail({ params }: { params: Promise<{ slug: string }> }) {
         </p>
       </header>
 
-      <div className="prose dark:prose-invert max-w-none mb-8">
+      <div className="mb-8">
         <PostContent content={post.content} />
       </div>
 

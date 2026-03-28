@@ -1,6 +1,7 @@
 import { EditorView } from "@codemirror/view";
 import { tags, tagHighlighter } from "@lezer/highlight";
 import { syntaxHighlighting } from "@codemirror/language";
+import { markdownStyles } from "@/lib/shared/markdown-styles";
 
 /**
  * Custom tag highlighter that maps lezer highlight tags to
@@ -32,7 +33,7 @@ export const markdownHighlighter = syntaxHighlighting(
 
 export const editorTheme = EditorView.theme({
   "&": {
-    fontSize: "14px",
+    fontSize: markdownStyles.base.fontSize,
     height: "100%",
   },
   "&.cm-focused": {
@@ -40,7 +41,7 @@ export const editorTheme = EditorView.theme({
   },
   ".cm-scroller": {
     fontFamily: "inherit",
-    lineHeight: "1.7",
+    lineHeight: markdownStyles.base.lineHeight,
     overflow: "auto",
   },
   ".cm-content": {
@@ -65,29 +66,29 @@ export const editorTheme = EditorView.theme({
   },
   // Heading levels
   ".cm-heading1": {
-    fontSize: "1.875em",
-    fontWeight: "700",
-    lineHeight: "1.3",
+    fontSize: markdownStyles.h1.fontSize,
+    fontWeight: markdownStyles.h1.fontWeight,
+    lineHeight: markdownStyles.h1.lineHeight,
   },
   ".cm-heading2": {
-    fontSize: "1.5em",
-    fontWeight: "600",
-    lineHeight: "1.35",
+    fontSize: markdownStyles.h2.fontSize,
+    fontWeight: markdownStyles.h2.fontWeight,
+    lineHeight: markdownStyles.h2.lineHeight,
   },
   ".cm-heading3": {
-    fontSize: "1.25em",
-    fontWeight: "600",
-    lineHeight: "1.4",
+    fontSize: markdownStyles.h3.fontSize,
+    fontWeight: markdownStyles.h3.fontWeight,
+    lineHeight: markdownStyles.h3.lineHeight,
   },
   ".cm-heading4": {
-    fontSize: "1.125em",
-    fontWeight: "600",
-    lineHeight: "1.4",
+    fontSize: markdownStyles.h4.fontSize,
+    fontWeight: markdownStyles.h4.fontWeight,
+    lineHeight: markdownStyles.h4.lineHeight,
   },
   ".cm-heading5, .cm-heading6": {
-    fontSize: "1em",
-    fontWeight: "600",
-    lineHeight: "1.5",
+    fontSize: markdownStyles.h5h6.fontSize,
+    fontWeight: markdownStyles.h5h6.fontWeight,
+    lineHeight: markdownStyles.h5h6.lineHeight,
   },
   // Markdown marks (*, **, #, etc.) dimmed
   ".cm-formatting": {
@@ -110,11 +111,11 @@ export const editorTheme = EditorView.theme({
   },
   // Inline code
   ".cm-monospace": {
-    fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
-    fontSize: "0.9em",
+    fontFamily: markdownStyles.inlineCode.fontFamily,
+    fontSize: markdownStyles.inlineCode.fontSize,
     backgroundColor: "hsl(var(--muted))",
-    borderRadius: "3px",
-    padding: "1px 4px",
+    borderRadius: markdownStyles.inlineCode.borderRadius,
+    padding: markdownStyles.inlineCode.padding,
   },
   // Emphasis
   ".cm-strong": {
@@ -135,5 +136,37 @@ export const editorTheme = EditorView.theme({
     color: "hsl(var(--primary))",
     textDecoration: "underline",
     cursor: "pointer",
+  },
+  // ── Code block styling ──────────────────────────
+  ".cm-codeblock-line": {
+    backgroundColor: "hsl(var(--muted))",
+    fontFamily: markdownStyles.inlineCode.fontFamily,
+    fontSize: markdownStyles.inlineCode.fontSize,
+    paddingLeft: "16px",
+    paddingRight: "16px",
+  },
+  ".cm-codeblock-first": {
+    borderTopLeftRadius: "6px",
+    borderTopRightRadius: "6px",
+    paddingTop: "12px",
+  },
+  ".cm-codeblock-last": {
+    borderBottomLeftRadius: "6px",
+    borderBottomRightRadius: "6px",
+    paddingBottom: "12px",
+  },
+  // ── Heading spacing ─────────────────────────────
+  ".cm-heading-line": {
+    paddingTop: "0.15em",
+    paddingBottom: "0.1em",
+  },
+  // ── List indentation ───────────────────────────
+  ".cm-list-line": {
+    paddingLeft: "1.625em",
+  },
+  // ── Blockquote styling ──────────────────────────
+  ".cm-blockquote-line": {
+    borderLeft: "3px solid hsl(var(--border))",
+    paddingLeft: "16px",
   },
 });

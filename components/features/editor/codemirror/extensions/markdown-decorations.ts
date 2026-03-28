@@ -53,6 +53,22 @@ function buildDecorations(view: EditorView): DecorationSet {
         const nodeLineFrom = state.doc.lineAt(node.from).number;
 
         switch (node.name) {
+          // ── Heading blocks (line decoration for spacing) ─
+          case "ATXHeading1":
+          case "ATXHeading2":
+          case "ATXHeading3":
+          case "ATXHeading4":
+          case "ATXHeading5":
+          case "ATXHeading6": {
+            const line = state.doc.lineAt(node.from);
+            decorations.push({
+              from: line.from,
+              to: line.from,
+              deco: Decoration.line({ class: "cm-heading-line" }),
+            });
+            break;
+          }
+
           // ── Headings ─────────────────────────────────────
           case "HeaderMark": {
             if (isCursorLine(state, nodeLineFrom)) break;
@@ -199,6 +215,22 @@ function buildDecorations(view: EditorView): DecorationSet {
             break;
           }
 
+          // ── List blocks (line decoration for indentation) ─
+          case "BulletList":
+          case "OrderedList": {
+            const listStartLine = state.doc.lineAt(node.from).number;
+            const listEndLine = state.doc.lineAt(node.to).number;
+            for (let ln = listStartLine; ln <= listEndLine; ln++) {
+              const line = state.doc.line(ln);
+              decorations.push({
+                from: line.from,
+                to: line.from,
+                deco: Decoration.line({ class: "cm-list-line" }),
+              });
+            }
+            break;
+          }
+
           // ── Bullet list markers ──────────────────────────
           case "ListMark": {
             if (isCursorLine(state, nodeLineFrom)) break;
@@ -223,14 +255,21 @@ function buildDecorations(view: EditorView): DecorationSet {
           // ── Fenced code block markers ────────────────────
           case "FencedCode": {
             // Hide opening and closing fence lines when cursor is not on them.
-            // We iterate children to find CodeMark and CodeInfo nodes.
+            // Also add line decorations for code block styling (background, padding).
             const fencedNode = node.node;
             let fChild = fencedNode.firstChild;
             let openFenceEnd = -1;
+            let openFenceLineNum = -1;
+            let closeFenceLineNum = -1;
 
             while (fChild) {
               if (fChild.name === "CodeMark") {
                 const fenceLineNum = state.doc.lineAt(fChild.from).number;
+                if (openFenceEnd === -1) {
+                  openFenceLineNum = fenceLineNum;
+                } else {
+                  closeFenceLineNum = fenceLineNum;
+                }
                 if (!isCursorLine(state, fenceLineNum)) {
                   // Determine if this is the opening or closing fence
                   if (openFenceEnd === -1) {
@@ -263,8 +302,45 @@ function buildDecorations(view: EditorView): DecorationSet {
               fChild = fChild.nextSibling;
             }
 
+            // Add line decorations for code block background styling
+            if (openFenceLineNum !== -1) {
+              const startLine = openFenceLineNum + 1;
+              const endLine =
+                closeFenceLineNum !== -1
+                  ? closeFenceLineNum - 1
+                  : state.doc.lineAt(node.to).number;
+
+              for (let ln = startLine; ln <= endLine; ln++) {
+                const line = state.doc.line(ln);
+                const classes = ["cm-codeblock-line"];
+                if (ln === startLine) classes.push("cm-codeblock-first");
+                if (ln === endLine) classes.push("cm-codeblock-last");
+                decorations.push({
+                  from: line.from,
+                  to: line.from,
+                  deco: Decoration.line({ class: classes.join(" ") }),
+                });
+              }
+            }
+
             // Don't recurse into FencedCode children — we handle them manually
             return false;
+          }
+
+          // ── Blockquote ─────────────────────────────────
+          case "Blockquote": {
+            // Add line decorations for blockquote border styling
+            const startLine = state.doc.lineAt(node.from).number;
+            const endLine = state.doc.lineAt(node.to).number;
+            for (let ln = startLine; ln <= endLine; ln++) {
+              const line = state.doc.line(ln);
+              decorations.push({
+                from: line.from,
+                to: line.from,
+                deco: Decoration.line({ class: "cm-blockquote-line" }),
+              });
+            }
+            break;
           }
 
           // ── Blockquote markers ───────────────────────────
@@ -295,15 +371,22 @@ function buildDecorations(view: EditorView): DecorationSet {
   decorations.sort((a, b) => a.from - b.from || a.to - b.to);
 
   // Remove overlapping decorations — keep the first one when ranges overlap
+  // Line decorations (from === to) are point ranges and never overlap with range decorations
   const cleaned: DecorationEntry[] = [];
+  let lastRangeEnd = -1;
   for (const d of decorations) {
-    if (d.from >= d.to) continue; // skip empty ranges
+    if (d.from > d.to) continue; // skip invalid ranges
     if (d.from < 0 || d.to > state.doc.length) continue; // skip out of bounds
-    const last = cleaned[cleaned.length - 1];
-    if (last && d.from < last.to) {
-      // Overlap — skip this decoration
+    // Line decorations (point ranges) can coexist with other decorations
+    if (d.from === d.to) {
+      cleaned.push(d);
       continue;
     }
+    if (d.from < lastRangeEnd) {
+      // Overlap with previous range decoration — skip
+      continue;
+    }
+    lastRangeEnd = d.to;
     cleaned.push(d);
   }
 
