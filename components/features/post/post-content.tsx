@@ -2,5 +2,9 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 export function PostContent({ content }: { content: string }) {
-  return <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>;
+  return (
+    <div className="prose dark:prose-invert max-w-none">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+    </div>
+  );
 }
