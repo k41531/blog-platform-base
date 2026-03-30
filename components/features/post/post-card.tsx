@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import type { Post } from "@/lib/domain/post/post";
+import { stripMarkdown } from "@/lib/shared/strip-markdown";
 import { formatDate } from "@/lib/utils";
 import {
   Card,
@@ -11,8 +12,9 @@ import {
 } from "@/components/ui/card";
 
 function truncate(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength) + "...";
+  const plain = stripMarkdown(text);
+  if (plain.length <= maxLength) return plain;
+  return plain.slice(0, maxLength) + "...";
 }
 
 export function PostCard({ post }: { post: Post }) {
