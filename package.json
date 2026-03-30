@@ -6,7 +6,10 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "check:arch": "bash scripts/check-architecture.sh",
+    "check:no-enum": "bash scripts/check-no-enum.sh",
+    "check:all": "pnpm check:arch && pnpm check:no-enum && pnpm tsc --noEmit && pnpm lint && pnpm test:run"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.0",
