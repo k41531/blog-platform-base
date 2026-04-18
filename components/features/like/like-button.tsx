@@ -6,10 +6,20 @@ import { Heart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { toggleLike } from "@/lib/actions/like-actions";
+import type { ActionError } from "@/lib/actions/types";
 
 type LikeState = {
   liked: boolean;
   count: number;
+};
+
+type ErrorType = ActionError["type"];
+
+const ERROR_MESSAGES: Record<ErrorType, string> = {
+  UNAUTHORIZED: "ログインが必要です",
+  NOT_FOUND: "記事が見つかりません",
+  VALIDATION_ERROR: "入力が不正です",
+  DATABASE_ERROR: "エラーが発生しました",
 };
 
 export function LikeButton({
@@ -22,7 +32,7 @@ export function LikeButton({
   initialCount: number;
 }) {
   const [isPending, startTransition] = useTransition();
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorType, setErrorType] = useState<ErrorType | null>(null);
   const [optimistic, setOptimistic] = useOptimistic<LikeState, void>(
     { liked: initialLiked, count: initialCount },
     (current) => ({
@@ -33,15 +43,13 @@ export function LikeButton({
 
   function handleClick() {
     startTransition(async () => {
-      setErrorMessage(null);
+      setErrorType(null);
       setOptimistic();
       const result = await toggleLike(postId);
       if (!result.ok) {
-        if (result.error.type === "UNAUTHORIZED") {
-          setErrorMessage("ログインが必要です");
-        } else {
-          setErrorMessage("エラーが発生しました");
-        }
+        // Revert optimistic update: calling the reducer again toggles state back.
+        setOptimistic();
+        setErrorType(result.error.type);
       }
     });
   }
@@ -66,16 +74,22 @@ export function LikeButton({
         />
         <span className="text-sm tabular-nums">{optimistic.count}</span>
       </Button>
-      {errorMessage && (
-        <p className="text-xs text-destructive">
-          {errorMessage}
-          {errorMessage === "ログインが必要です" && (
-            <Link href="/auth/login" className="underline ml-1">
-              ログイン
-            </Link>
-          )}
-        </p>
-      )}
+      <p
+        role="status"
+        aria-live="polite"
+        className="text-xs text-destructive min-h-[1rem]"
+      >
+        {errorType && (
+          <>
+            {ERROR_MESSAGES[errorType]}
+            {errorType === "UNAUTHORIZED" && (
+              <Link href="/auth/login" className="underline ml-1">
+                ログイン
+              </Link>
+            )}
+          </>
+        )}
+      </p>
     </div>
   );
 }
