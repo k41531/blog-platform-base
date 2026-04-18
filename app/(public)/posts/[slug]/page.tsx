@@ -35,6 +35,9 @@ async function PostDetail({ params }: { params: Promise<{ slug: string }> }) {
 
   const likeCount = likeCountResult.ok ? likeCountResult.value : 0;
   const liked = hasLikedResult.ok ? hasLikedResult.value : false;
+  if (!profileResult.ok) {
+    console.error("Failed to load author profile", profileResult.error);
+  }
   const authorProfile = profileResult.ok ? profileResult.value : null;
 
   return (

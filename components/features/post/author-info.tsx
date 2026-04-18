@@ -1,18 +1,27 @@
 import type { Profile } from "@/lib/domain/profile/profile";
 
+function getInitial(displayName: string): string {
+  const [first] = [...displayName];
+  return first ? first.toUpperCase() : "?";
+}
+
 export function AuthorInfo({ profile }: { profile: Profile }) {
   return (
     <div className="flex items-center gap-3">
       {profile.avatarUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={profile.avatarUrl}
-          alt={profile.displayName}
+          alt=""
           className="size-10 rounded-full object-cover"
         />
       ) : (
-        <div className="size-10 rounded-full bg-muted flex items-center justify-center">
+        <div
+          aria-hidden="true"
+          className="size-10 rounded-full bg-muted flex items-center justify-center"
+        >
           <span className="text-sm font-medium text-muted-foreground">
-            {profile.displayName.charAt(0).toUpperCase()}
+            {getInitial(profile.displayName)}
           </span>
         </div>
       )}
