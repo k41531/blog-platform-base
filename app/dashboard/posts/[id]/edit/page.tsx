@@ -26,7 +26,7 @@ async function EditPostContent({
   const isPublished = post.status === "published";
 
   return (
-    <div className="fade-in mx-auto max-w-5xl">
+    <div className="fade-in">
       <div className="db-main-header">
         <div>
           <span className="en-label">EDIT POST</span>
