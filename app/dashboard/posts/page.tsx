@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { FilePlus } from "lucide-react";
 import { connection } from "next/server";
 
-import { Button } from "@/components/ui/button";
 import { getMyPosts } from "@/lib/actions/post-actions";
 import { PostListItem } from "@/components/features/dashboard/post-list-item";
 
@@ -18,68 +17,74 @@ async function PostListContent({
 
   if (!result.ok) {
     return (
-      <div className="text-center text-muted-foreground">
-        記事の取得に失敗しました
+      <div className="empty-state">
+        <h3>読み込みエラー</h3>
+        <p>記事の取得に失敗しました。</p>
       </div>
     );
   }
 
   const allPosts = result.value;
   const filter = params.status ?? "all";
+  const counts = {
+    all: allPosts.length,
+    draft: allPosts.filter((p) => p.status === "draft").length,
+    published: allPosts.filter((p) => p.status === "published").length,
+  };
   const posts =
     filter === "all"
       ? allPosts
       : allPosts.filter((p) => p.status === filter);
 
+  const tabs = [
+    { value: "all", label: "すべて", count: counts.all },
+    { value: "draft", label: "下書き", count: counts.draft },
+    { value: "published", label: "公開済み", count: counts.published },
+  ];
+
   return (
     <>
-      {/* Filter tabs */}
-      <div className="flex gap-2">
-        {[
-          { value: "all", label: "すべて" },
-          { value: "draft", label: "下書き" },
-          { value: "published", label: "公開済み" },
-        ].map((tab) => (
-          <Button
+      <div className="tabs">
+        {tabs.map((tab) => (
+          <Link
             key={tab.value}
-            variant={filter === tab.value ? "default" : "outline"}
-            size="sm"
-            asChild
+            href={
+              tab.value === "all"
+                ? "/dashboard/posts"
+                : `/dashboard/posts?status=${tab.value}`
+            }
+            className={`tab ${filter === tab.value ? "is-active" : ""}`}
           >
-            <Link
-              href={
-                tab.value === "all"
-                  ? "/dashboard/posts"
-                  : `/dashboard/posts?status=${tab.value}`
-              }
-            >
-              {tab.label}
-            </Link>
-          </Button>
+            {tab.label}
+            <span className="count">{tab.count}</span>
+          </Link>
         ))}
       </div>
 
-      {/* Post list */}
       {posts.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-12 text-center">
-          <p className="text-muted-foreground">
+        <div className="empty-state">
+          <h3>
             {filter === "all"
               ? "まだ記事がありません"
               : filter === "draft"
                 ? "下書きの記事がありません"
                 : "公開済みの記事がありません"}
-          </p>
+          </h3>
           {filter === "all" && (
-            <Button className="mt-4" asChild>
-              <Link href="/dashboard/posts/new">
-                <FilePlus className="mr-2 h-4 w-4" />
-                最初の記事を書きましょう
+            <p>
+              <Link
+                href="/dashboard/posts/new"
+                className="btn-haruni btn-haruni-primary"
+                style={{ marginTop: 16 }}
+              >
+                <FilePlus size={14} />
+                最初の記事を書く
               </Link>
-            </Button>
+            </p>
           )}
         </div>
       ) : (
-        <div className="space-y-2">
+        <div>
           {posts.map((post) => (
             <PostListItem key={post.id} post={post} />
           ))}
@@ -95,22 +100,23 @@ export default function PostsPage({
   searchParams: Promise<{ status?: string }>;
 }) {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">マイ記事</h2>
-        <Button asChild>
-          <Link href="/dashboard/posts/new">
-            <FilePlus className="mr-2 h-4 w-4" />
-            新規作成
-          </Link>
-        </Button>
+    <div className="fade-in">
+      <div className="db-main-header">
+        <div>
+          <span className="en-label">MY POSTS</span>
+          <h1 className="db-main-title">マイ記事</h1>
+        </div>
+        <Link href="/dashboard/posts/new" className="btn-pop">
+          <FilePlus size={14} />
+          新規作成
+        </Link>
       </div>
 
       <Suspense
         fallback={
-          <p className="text-muted-foreground text-center py-12">
-            読み込み中...
-          </p>
+          <div className="empty-state">
+            <p>読み込み中…</p>
+          </div>
         }
       >
         <PostListContent searchParams={searchParams} />

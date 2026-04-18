@@ -1,12 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
+import { Check } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { updateMyProfile } from "@/lib/actions/profile-actions";
 import type { Profile } from "@/lib/domain/profile/profile";
 
@@ -37,67 +33,95 @@ export function ProfileForm({ profile }: { profile: Profile }) {
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>プロフィール設定</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form action={formAction} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="email">メールアドレス</Label>
-            <Input id="email" value={profile.email} disabled />
-            <p className="text-xs text-muted-foreground">
-              メールアドレスは変更できません
-            </p>
-          </div>
+    <div className="settings-card" style={{ maxWidth: 680 }}>
+      <h3>プロフィール設定</h3>
+      <p className="desc">他のメンバーに表示される情報です。</p>
 
-          <div className="space-y-2">
-            <Label htmlFor="displayName">表示名</Label>
-            <Input
-              id="displayName"
-              name="displayName"
-              defaultValue={profile.displayName}
-              required
-            />
-          </div>
+      <form action={formAction}>
+        <div className="field">
+          <label htmlFor="email">メールアドレス</label>
+          <input
+            id="email"
+            className="field-input"
+            value={profile.email}
+            disabled
+            style={{ opacity: 0.6, cursor: "not-allowed" }}
+          />
+          <span className="field-hint">メールアドレスは変更できません</span>
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="bio">自己紹介</Label>
-            <Textarea
-              id="bio"
-              name="bio"
-              defaultValue={profile.bio ?? ""}
-              rows={4}
-            />
-          </div>
+        <div className="field">
+          <label htmlFor="displayName">表示名</label>
+          <input
+            id="displayName"
+            name="displayName"
+            className="field-input"
+            defaultValue={profile.displayName}
+            required
+          />
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="avatarUrl">アバターURL</Label>
-            <Input
-              id="avatarUrl"
-              name="avatarUrl"
-              defaultValue={profile.avatarUrl ?? ""}
-              placeholder="https://example.com/avatar.png"
-            />
-          </div>
+        <div className="field">
+          <label htmlFor="bio">自己紹介</label>
+          <textarea
+            id="bio"
+            name="bio"
+            className="field-input"
+            defaultValue={profile.bio ?? ""}
+            rows={4}
+            style={{ resize: "vertical" }}
+          />
+        </div>
 
-          {state.type !== "idle" && (
-            <p
-              className={
-                state.type === "success"
-                  ? "text-sm text-green-600"
-                  : "text-sm text-destructive"
-              }
+        <div className="field">
+          <label htmlFor="avatarUrl">アバターURL</label>
+          <input
+            id="avatarUrl"
+            name="avatarUrl"
+            type="url"
+            className="field-input"
+            defaultValue={profile.avatarUrl ?? ""}
+            placeholder="https://example.com/avatar.png"
+          />
+        </div>
+
+        {state.type === "error" && (
+          <div className="field-error" style={{ marginBottom: 12 }}>
+            {state.message}
+          </div>
+        )}
+
+        <div
+          style={{
+            display: "flex",
+            gap: 10,
+            marginTop: 12,
+            alignItems: "center",
+          }}
+        >
+          <button
+            type="submit"
+            className="btn-pop"
+            disabled={isPending}
+          >
+            {isPending ? "保存中…" : "保存する"}
+          </button>
+          {state.type === "success" && (
+            <span
+              style={{
+                color: "var(--success)",
+                fontSize: 13,
+                fontFamily: "var(--font-jp-sans)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+              }}
             >
-              {state.message}
-            </p>
+              <Check size={14} /> {state.message}
+            </span>
           )}
-
-          <Button type="submit" disabled={isPending}>
-            {isPending ? "保存中..." : "保存"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+        </div>
+      </form>
+    </div>
   );
 }

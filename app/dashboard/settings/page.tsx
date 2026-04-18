@@ -8,8 +8,9 @@ async function SettingsContent() {
 
   if (!result.ok) {
     return (
-      <div className="text-center text-muted-foreground">
-        プロフィールの取得に失敗しました
+      <div className="empty-state">
+        <h3>読み込みエラー</h3>
+        <p>プロフィールの取得に失敗しました。</p>
       </div>
     );
   }
@@ -19,13 +20,18 @@ async function SettingsContent() {
 
 export default function SettingsPage() {
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold">設定</h2>
+    <div className="fade-in">
+      <div className="db-main-header">
+        <div>
+          <span className="en-label">SETTINGS</span>
+          <h1 className="db-main-title">設定</h1>
+        </div>
+      </div>
       <Suspense
         fallback={
-          <p className="text-muted-foreground text-center py-12">
-            読み込み中...
-          </p>
+          <div className="empty-state">
+            <p>読み込み中…</p>
+          </div>
         }
       >
         <SettingsContent />

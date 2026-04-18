@@ -3,9 +3,6 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { CodeMirrorEditor } from "@/components/features/editor/codemirror/codemirror-editor";
 import type { Post } from "@/lib/domain/post/post";
@@ -136,17 +133,14 @@ export function PostEditor({ mode, post }: PostEditorProps) {
   }
 
   return (
-    <div className="space-y-6">
-      {error && (
-        <div className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {error}
-        </div>
-      )}
+    <div className="space-y-5">
+      {error && <div className="form-error-banner">{error}</div>}
 
-      <div className="space-y-2">
-        <Label htmlFor="title">タイトル</Label>
-        <Input
+      <div className="field">
+        <label htmlFor="title">タイトル</label>
+        <input
           id="title"
+          className="editor-title-input"
           placeholder="記事のタイトル"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -154,43 +148,59 @@ export function PostEditor({ mode, post }: PostEditorProps) {
         />
       </div>
 
-      <Card>
-        <CardContent className="p-4">
-          <CodeMirrorEditor
-            value={content}
-            onChange={setContent}
-            disabled={isPending}
-          />
-        </CardContent>
-      </Card>
+      <div className="field">
+        <label>本文</label>
+        <Card>
+          <CardContent className="p-4">
+            <CodeMirrorEditor
+              value={content}
+              onChange={setContent}
+              disabled={isPending}
+            />
+          </CardContent>
+        </Card>
+      </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <Button
+      <div className="editor-actions">
+        <button
+          type="button"
+          className="btn-haruni btn-haruni-secondary"
           onClick={handleSaveDraft}
           disabled={isPending}
-          variant="outline"
         >
-          {isPending ? "保存中..." : "下書き保存"}
-        </Button>
-        <Button onClick={handlePublish} disabled={isPending}>
-          {isPending ? "公開中..." : "公開"}
-        </Button>
-        {mode === "edit" && post?.status === "published" && (
-          <Button
-            onClick={handleUnpublish}
-            disabled={isPending}
-            variant="secondary"
-          >
-            {isPending ? "処理中..." : "非公開にする"}
-          </Button>
-        )}
-        <Button
-          variant="ghost"
-          onClick={() => router.push("/dashboard/posts")}
+          {isPending ? "保存中…" : "下書き保存"}
+        </button>
+        <button
+          type="button"
+          className="btn-pop"
+          onClick={handlePublish}
           disabled={isPending}
         >
+          {isPending
+            ? "公開中…"
+            : mode === "edit" && post?.status === "published"
+              ? "更新する"
+              : "公開する"}
+        </button>
+        {mode === "edit" && post?.status === "published" && (
+          <button
+            type="button"
+            className="btn-ghost-pill"
+            onClick={handleUnpublish}
+            disabled={isPending}
+          >
+            {isPending ? "処理中…" : "非公開にする"}
+          </button>
+        )}
+        <button
+          type="button"
+          className="btn-ghost-pill"
+          onClick={() => router.push("/dashboard/posts")}
+          disabled={isPending}
+          style={{ marginLeft: "auto" }}
+        >
           キャンセル
-        </Button>
+        </button>
       </div>
     </div>
   );

@@ -22,10 +22,23 @@ async function EditPostContent({
     notFound();
   }
 
+  const post = result.value;
+  const isPublished = post.status === "published";
+
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
-      <h1 className="text-2xl font-bold">記事を編集</h1>
-      <PostEditor mode="edit" post={result.value} />
+    <div className="fade-in mx-auto max-w-5xl">
+      <div className="db-main-header">
+        <div>
+          <span className="en-label">EDIT POST</span>
+          <h1 className="db-main-title">記事を編集</h1>
+        </div>
+        <span
+          className={`status-badge ${isPublished ? "is-public" : "is-draft"}`}
+        >
+          {isPublished ? "公開" : "下書き"}
+        </span>
+      </div>
+      <PostEditor mode="edit" post={post} />
     </div>
   );
 }
@@ -34,9 +47,9 @@ export default function EditPostPage({ params }: EditPostPageProps) {
   return (
     <Suspense
       fallback={
-        <p className="text-muted-foreground text-center py-12">
-          読み込み中...
-        </p>
+        <div className="empty-state">
+          <p>読み込み中…</p>
+        </div>
       }
     >
       <EditPostContent params={params} />
