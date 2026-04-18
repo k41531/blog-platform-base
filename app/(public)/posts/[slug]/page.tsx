@@ -6,9 +6,11 @@ import { connection } from "next/server";
 
 import { getPost } from "@/lib/actions/post-actions";
 import { getLikeCount, hasLiked } from "@/lib/actions/like-actions";
+import { getProfile } from "@/lib/actions/profile-actions";
 import { formatDate } from "@/lib/utils";
 import { PostContent } from "@/components/features/post/post-content";
 import { LikeButton } from "@/components/features/like/like-button";
+import { AuthorInfo } from "@/components/features/post/author-info";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -25,13 +27,18 @@ async function PostDetail({ params }: { params: Promise<{ slug: string }> }) {
 
   const post = result.value;
 
-  const [likeCountResult, hasLikedResult] = await Promise.all([
+  const [likeCountResult, hasLikedResult, profileResult] = await Promise.all([
     getLikeCount(post.id),
     hasLiked(post.id),
+    getProfile(post.authorId),
   ]);
 
   const likeCount = likeCountResult.ok ? likeCountResult.value : 0;
   const liked = hasLikedResult.ok ? hasLikedResult.value : false;
+  if (!profileResult.ok) {
+    console.error("Failed to load author profile", profileResult.error);
+  }
+  const authorProfile = profileResult.ok ? profileResult.value : null;
 
   return (
     <article>
@@ -48,6 +55,11 @@ async function PostDetail({ params }: { params: Promise<{ slug: string }> }) {
         <p className="text-sm text-muted-foreground">
           {post.publishedAt ? formatDate(post.publishedAt) : ""}
         </p>
+        {authorProfile && (
+          <div className="mt-4">
+            <AuthorInfo profile={authorProfile} />
+          </div>
+        )}
       </header>
 
       <div className="mb-8">
