@@ -1,9 +1,15 @@
+const MAX_INPUT_LENGTH = 2000;
+
 /**
  * Strips common Markdown syntax from text, returning plain text.
  * Useful for generating excerpts from Markdown content.
+ *
+ * Note: regex-based; does not handle all Markdown edge cases (nested parens in
+ * link URLs, reference-style links, autolinks, HTML). Input is capped at
+ * MAX_INPUT_LENGTH to mitigate ReDoS on pathological input.
  */
 export function stripMarkdown(text: string): string {
-  let result = text;
+  let result = text.length > MAX_INPUT_LENGTH ? text.slice(0, MAX_INPUT_LENGTH) : text;
 
   // Remove code blocks (triple backtick fenced blocks)
   result = result.replace(/```[\s\S]*?```/g, "");
