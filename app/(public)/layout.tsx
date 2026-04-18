@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { AuthButton } from "@/components/auth-button";
+import { PublicNav } from "@/components/public-nav";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 
 export default function PublicLayout({
@@ -20,9 +21,9 @@ export default function PublicLayout({
               <span className="en-sub">HARU-NI BLOG</span>
             </div>
           </Link>
-          <nav className="header-nav">
-            <Link href="/">記事一覧</Link>
-          </nav>
+          <Suspense fallback={<nav className="header-nav"><Link href="/">記事一覧</Link></nav>}>
+            <PublicNav />
+          </Suspense>
           <div className="header-actions ml-auto flex items-center gap-3">
             <Suspense>
               <AuthButton />
