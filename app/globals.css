@@ -582,6 +582,243 @@
     color: var(--accent-color);
   }
 
+  /* --- auth layout --- */
+  .auth-shell {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 40px 20px;
+    background:
+      radial-gradient(circle at 15% 20%, color-mix(in srgb, var(--accent-color) 10%, transparent), transparent 50%),
+      radial-gradient(circle at 85% 80%, color-mix(in srgb, var(--accent-color) 7%, transparent), transparent 55%),
+      var(--bg-1);
+  }
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--bg-2);
+    border: 1px solid var(--border-1);
+    border-radius: 24px;
+    padding: 36px 34px;
+    box-shadow: var(--shadow-md);
+  }
+  .auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+  .auth-brand .mark-dot {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--accent-color);
+    color: white;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-en);
+    font-weight: 800;
+  }
+  .auth-brand .name {
+    font-family: var(--font-jp-round);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--fg-1);
+  }
+  .auth-brand .sub {
+    font-family: var(--font-en);
+    font-size: 10px;
+    color: var(--accent-color);
+    letter-spacing: 0.2em;
+    margin-left: 6px;
+    text-transform: uppercase;
+  }
+  .auth-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .auth-header h1 {
+    font-family: var(--font-jp-round);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--fg-1);
+    margin: 4px 0 6px;
+  }
+  .auth-header p {
+    font-family: var(--font-jp-sans);
+    font-size: 13px;
+    color: var(--fg-2);
+    margin: 0;
+    line-height: 1.7;
+  }
+  .auth-foot {
+    text-align: center;
+    margin-top: 20px;
+    font-family: var(--font-jp-sans);
+    font-size: 12.5px;
+    color: var(--fg-2);
+  }
+  .auth-foot a {
+    color: var(--accent-color);
+    font-weight: 600;
+  }
+  .auth-illustration {
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 12px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent-color);
+  }
+
+  /* --- form field (used in auth and editor forms) --- */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .field label {
+    font-family: var(--font-jp-sans);
+    font-size: 13px;
+    color: var(--fg-1);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .field-hint {
+    font-size: 12px;
+    color: var(--fg-3);
+    font-family: var(--font-jp-sans);
+  }
+  .field-error {
+    font-size: 12px;
+    color: var(--danger);
+    font-family: var(--font-jp-sans);
+    margin-top: 2px;
+  }
+  .field-input {
+    font-family: var(--font-jp-sans);
+    font-size: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border-1);
+    background: var(--bg-2);
+    color: var(--fg-1);
+    transition: 0.2s;
+    width: 100%;
+  }
+  .field-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-color) 18%, transparent);
+  }
+  .field-input::placeholder {
+    color: var(--fg-3);
+  }
+
+  /* --- haru-ni primary / secondary buttons --- */
+  .btn-haruni {
+    font-family: var(--font-jp-round);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: none;
+    transition: 0.2s var(--ease-out);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .btn-haruni-primary {
+    background: var(--accent-color);
+    color: #fff;
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-haruni-primary:hover:not(:disabled) {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  .btn-haruni-primary:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+  .btn-haruni-secondary {
+    background: var(--bg-2);
+    color: var(--fg-1);
+    border: 1.5px solid var(--border-1);
+  }
+  .btn-haruni-secondary:hover:not(:disabled) {
+    background: var(--bg-3);
+  }
+  .btn-haruni-lg {
+    font-size: 15px;
+    padding: 14px 26px;
+  }
+  .btn-haruni-block {
+    width: 100%;
+  }
+  .btn-haruni:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  /* --- status tick / error icon --- */
+  .status-tick {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--success) 18%, transparent);
+    color: var(--success);
+    display: grid;
+    place-items: center;
+    margin: 0 auto 14px;
+  }
+  .status-error {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--danger) 18%, transparent);
+    color: var(--danger);
+    display: grid;
+    place-items: center;
+    margin: 0 auto 14px;
+  }
+
+  /* --- password strength meter --- */
+  .pw-meter {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+  }
+  .pw-meter span {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border-1);
+  }
+  .pw-meter.s1 span:nth-child(1) {
+    background: var(--danger);
+  }
+  .pw-meter.s2 span:nth-child(-n + 2) {
+    background: var(--warning);
+  }
+  .pw-meter.s3 span:nth-child(-n + 3) {
+    background: var(--success);
+  }
+  .pw-meter.s4 span {
+    background: var(--success);
+  }
+
   /* --- fade --- */
   .fade-in {
     animation: haruni-fade-in 0.38s var(--ease-out);

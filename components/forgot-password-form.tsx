@@ -1,24 +1,13 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
+import { Mail } from "lucide-react";
 
-export function ForgotPasswordForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+import { createClient } from "@/lib/supabase/client";
+import { AuthBrand } from "@/components/auth-brand";
+
+export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -31,75 +20,83 @@ export function ForgotPasswordForm({
     setError(null);
 
     try {
-      // The url which will be included in the email. This URL needs to be configured in your redirect URLs in the Supabase dashboard at https://supabase.com/dashboard/project/_/auth/url-configuration
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/update-password`,
       });
       if (error) throw error;
       setSuccess(true);
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+      setError(error instanceof Error ? error.message : "エラーが発生しました");
     } finally {
       setIsLoading(false);
     }
   };
 
+  if (success) {
+    return (
+      <div className="auth-card fade-in">
+        <AuthBrand />
+        <div className="status-tick">
+          <Mail size={24} />
+        </div>
+        <div className="auth-header">
+          <span className="en-label">CHECK YOUR INBOX</span>
+          <h1>メールを送信しました</h1>
+          <p>
+            <b>{email}</b> にパスワード再設定用のリンクをお送りしました。
+          </p>
+        </div>
+        <Link
+          href="/auth/login"
+          className="btn-haruni btn-haruni-secondary btn-haruni-block"
+        >
+          ログインページへ
+        </Link>
+      </div>
+    );
+  }
+
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      {success ? (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Check Your Email</CardTitle>
-            <CardDescription>Password reset instructions sent</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              If you registered using your email and password, you will receive
-              a password reset email.
-            </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Reset Your Password</CardTitle>
-            <CardDescription>
-              Type in your email and we&apos;ll send you a link to reset your
-              password
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleForgotPassword}>
-              <div className="flex flex-col gap-6">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Sending..." : "Send reset email"}
-                </Button>
-              </div>
-              <div className="mt-4 text-center text-sm">
-                Already have an account?{" "}
-                <Link
-                  href="/auth/login"
-                  className="underline underline-offset-4"
-                >
-                  Login
-                </Link>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
+    <div className="auth-card fade-in">
+      <AuthBrand />
+      <div className="auth-header">
+        <span className="en-label">RESET PASSWORD</span>
+        <h1>パスワードの再設定</h1>
+        <p>
+          登録メールアドレスをご入力ください。
+          <br />
+          再設定用のリンクをお送りします。
+        </p>
+      </div>
+      <form onSubmit={handleForgotPassword}>
+        <div className="field">
+          <label htmlFor="email">メールアドレス</label>
+          <input
+            id="email"
+            type="email"
+            className="field-input"
+            placeholder="you@example.com"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        {error && (
+          <div className="field-error" style={{ marginBottom: 12 }}>
+            {error}
+          </div>
+        )}
+        <button
+          type="submit"
+          className="btn-haruni btn-haruni-primary btn-haruni-lg btn-haruni-block"
+          disabled={isLoading}
+        >
+          {isLoading ? "送信中…" : "再設定メールを送る"}
+        </button>
+        <div className="auth-foot">
+          思い出した方は <Link href="/auth/login">ログイン</Link>
+        </div>
+      </form>
     </div>
   );
 }
