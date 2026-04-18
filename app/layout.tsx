@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Montserrat, Zen_Kaku_Gothic_New, Zen_Maru_Gothic } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
@@ -14,10 +14,25 @@ export const metadata: Metadata = {
   description: "ブログプラットフォーム",
 };
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  display: "swap",
+const zenMaruGothic = Zen_Maru_Gothic({
+  variable: "--font-jp-round-family",
+  weight: ["400", "500", "700", "900"],
   subsets: ["latin"],
+  display: "swap",
+});
+
+const zenKakuGothicNew = Zen_Kaku_Gothic_New({
+  variable: "--font-jp-sans-family",
+  weight: ["400", "500", "700", "900"],
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  variable: "--font-en-family",
+  weight: ["400", "500", "600", "700", "800"],
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export default function RootLayout({
@@ -26,8 +41,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.className} antialiased`}>
+    <html lang="ja" suppressHydrationWarning>
+      <body
+        className={`${zenMaruGothic.variable} ${zenKakuGothicNew.variable} ${montserrat.variable} antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

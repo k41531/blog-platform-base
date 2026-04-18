@@ -11,12 +11,19 @@ export default function PublicLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b">
-        <div className="max-w-4xl mx-auto flex items-center justify-between h-14 px-4">
-          <Link href="/" className="font-bold text-lg">
-            Blog
+      <header className="app-header">
+        <div className="app-header-inner">
+          <Link href="/" className="brand-logo">
+            <div className="mark-dot">B</div>
+            <div>
+              <div>Blog</div>
+              <span className="en-sub">HARU-NI BLOG</span>
+            </div>
           </Link>
-          <div className="flex items-center gap-2">
+          <nav className="header-nav">
+            <Link href="/">記事一覧</Link>
+          </nav>
+          <div className="header-actions ml-auto flex items-center gap-3">
             <Suspense>
               <AuthButton />
             </Suspense>
@@ -25,13 +32,15 @@ export default function PublicLayout({
         </div>
       </header>
 
-      <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
-        {children}
-      </main>
+      <main className="flex-1 app-container pb-16">{children}</main>
 
-      <footer className="border-t">
-        <div className="max-w-4xl mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-          &copy; 2025 Blog Platform
+      <footer className="app-footer">
+        <div className="app-footer-inner">
+          <div>
+            <span className="en-tiny">© 2026 BLOG PLATFORM</span>
+            <span className="mx-2">・</span>
+            ブログプラットフォーム
+          </div>
         </div>
       </footer>
     </div>

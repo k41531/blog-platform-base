@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { connection } from "next/server";
-import { Button } from "./ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "./logout-button";
 
@@ -13,18 +12,23 @@ export async function AuthButton() {
   const user = data?.claims;
 
   return user ? (
-    <div className="flex items-center gap-4">
-      Hey, {user.email}!
+    <div className="flex items-center gap-3">
+      <span
+        className="text-sm"
+        style={{ color: "var(--fg-2)", fontFamily: "var(--font-jp-sans)" }}
+      >
+        こんにちは、<b style={{ color: "var(--fg-1)", fontWeight: 600 }}>{user.email}</b> さん
+      </span>
       <LogoutButton />
     </div>
   ) : (
     <div className="flex gap-2">
-      <Button asChild size="sm" variant={"outline"}>
-        <Link href="/auth/login">Sign in</Link>
-      </Button>
-      <Button asChild size="sm" variant={"default"}>
-        <Link href="/auth/sign-up">Sign up</Link>
-      </Button>
+      <Link href="/auth/login" className="btn-ghost-pill">
+        ログイン
+      </Link>
+      <Link href="/auth/sign-up" className="btn-pop btn-pop-sm">
+        新規登録
+      </Link>
     </div>
   );
 }

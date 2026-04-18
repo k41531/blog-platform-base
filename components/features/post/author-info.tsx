@@ -13,20 +13,23 @@ export function AuthorInfo({ profile }: { profile: Profile }) {
         <img
           src={profile.avatarUrl}
           alt=""
-          className="size-10 rounded-full object-cover"
+          className="avatar-md"
+          style={{ objectFit: "cover" }}
         />
       ) : (
-        <div
-          aria-hidden="true"
-          className="size-10 rounded-full bg-muted flex items-center justify-center"
-        >
-          <span className="text-sm font-medium text-muted-foreground">
-            {getInitial(profile.displayName)}
-          </span>
+        <div aria-hidden="true" className="avatar-md">
+          {getInitial(profile.displayName)}
         </div>
       )}
-      <div>
-        <p className="text-sm font-medium">{profile.displayName}</p>
+      <div
+        style={{
+          fontFamily: "var(--font-jp-sans)",
+          fontWeight: 600,
+          fontSize: 14,
+          color: "var(--fg-1)",
+        }}
+      >
+        {profile.displayName}
       </div>
     </div>
   );

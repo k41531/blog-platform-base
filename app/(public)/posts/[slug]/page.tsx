@@ -16,6 +16,10 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
+function formatDateEn(date: Date): string {
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
+}
+
 async function PostDetail({ params }: { params: Promise<{ slug: string }> }) {
   await connection();
   const { slug } = await params;
@@ -41,32 +45,34 @@ async function PostDetail({ params }: { params: Promise<{ slug: string }> }) {
   const authorProfile = profileResult.ok ? profileResult.value : null;
 
   return (
-    <article>
-      <Link
-        href="/"
-        className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
-      >
+    <article className="fade-in app-container-narrow mx-auto pt-8">
+      <Link href="/" className="back-link">
         <ArrowLeft size={16} />
         記事一覧に戻る
       </Link>
 
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">{post.title}</h1>
-        <p className="text-sm text-muted-foreground">
-          {post.publishedAt ? formatDate(post.publishedAt) : ""}
-        </p>
+      <header className="post-header">
+        <span className="en-label">POST</span>
+        <h1 className="post-title">{post.title}</h1>
+        <div className="flex flex-wrap items-center gap-4">
+          {post.publishedAt && (
+            <span className="post-meta">
+              {formatDateEn(post.publishedAt)} ・ {formatDate(post.publishedAt)}
+            </span>
+          )}
+        </div>
         {authorProfile && (
-          <div className="mt-4">
+          <div className="mt-5">
             <AuthorInfo profile={authorProfile} />
           </div>
         )}
       </header>
 
-      <div className="mb-8">
+      <div className="prose dark:prose-invert max-w-none">
         <PostContent content={post.content} />
       </div>
 
-      <div className="border-t pt-4">
+      <div className="post-actions">
         <LikeButton
           postId={post.id}
           initialLiked={liked}
@@ -81,9 +87,9 @@ export default function PostPage({ params }: Props) {
   return (
     <Suspense
       fallback={
-        <p className="text-muted-foreground text-center py-12">
-          読み込み中...
-        </p>
+        <div className="empty-state">
+          <p>読み込み中…</p>
+        </div>
       }
     >
       <PostDetail params={params} />

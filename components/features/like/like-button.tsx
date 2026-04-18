@@ -4,7 +4,6 @@ import { useState, useOptimistic, useTransition } from "react";
 import Link from "next/link";
 import { Heart } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { toggleLike } from "@/lib/actions/like-actions";
 import type { ActionError } from "@/lib/actions/types";
 
@@ -47,7 +46,6 @@ export function LikeButton({
       setOptimistic();
       const result = await toggleLike(postId);
       if (!result.ok) {
-        // Revert optimistic update: calling the reducer again toggles state back.
         setOptimistic();
         setErrorType(result.error.type);
       }
@@ -56,28 +54,24 @@ export function LikeButton({
 
   return (
     <div>
-      <Button
-        variant="ghost"
-        size="sm"
+      <button
+        type="button"
         onClick={handleClick}
         disabled={isPending}
         aria-label={optimistic.liked ? "いいねを取り消す" : "いいねする"}
-        className="gap-1.5"
+        className={`like-btn ${optimistic.liked ? "is-liked" : ""}`}
       >
         <Heart
-          className={
-            optimistic.liked
-              ? "fill-red-500 text-red-500"
-              : "text-muted-foreground"
-          }
-          size={18}
+          size={16}
+          className={optimistic.liked ? "fill-current" : ""}
         />
-        <span className="text-sm tabular-nums">{optimistic.count}</span>
-      </Button>
+        <span className="tabular-nums">{optimistic.count}</span>
+      </button>
       <p
         role="status"
         aria-live="polite"
-        className="text-xs text-destructive min-h-[1rem]"
+        className="text-xs mt-2 min-h-[1rem]"
+        style={{ color: "var(--danger)" }}
       >
         {errorType && (
           <>

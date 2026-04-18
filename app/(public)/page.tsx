@@ -8,9 +8,10 @@ async function PostList() {
 
   if (!result.ok) {
     return (
-      <p className="text-muted-foreground text-center py-12">
-        記事の取得に失敗しました。
-      </p>
+      <div className="empty-state">
+        <h3>読み込みエラー</h3>
+        <p>記事の取得に失敗しました。</p>
+      </div>
     );
   }
 
@@ -18,14 +19,15 @@ async function PostList() {
 
   if (posts.length === 0) {
     return (
-      <p className="text-muted-foreground text-center py-12">
-        まだ記事がありません。
-      </p>
+      <div className="empty-state">
+        <h3>まだ記事がありません</h3>
+        <p>最初の一本を書いてみませんか？</p>
+      </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="post-list">
       {posts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
@@ -35,13 +37,22 @@ async function PostList() {
 
 export default function HomePage() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-8">記事一覧</h1>
+    <div className="fade-in">
+      <section className="page-hero">
+        <span className="en-label">POSTS</span>
+        <h1 className="page-title">記事一覧</h1>
+        <p className="page-subtitle">
+          みんなで書く、社内ブログ。
+          <br />
+          開発Tipsや勉強会レポート、日々の気づきまで気軽に書き残せる場所です。
+        </p>
+      </section>
+
       <Suspense
         fallback={
-          <p className="text-muted-foreground text-center py-12">
-            読み込み中...
-          </p>
+          <div className="empty-state">
+            <p>読み込み中…</p>
+          </div>
         }
       >
         <PostList />
